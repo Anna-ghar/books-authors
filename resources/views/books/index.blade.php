@@ -42,8 +42,8 @@
                                 {{ $author->first_name }} {{ $author->last_name }}<br>
                             @endforeach
                         </p>
-                        <a href="/public/books/{{ $book->id }}" class="btn btn-outline-info">Show</a>
-                        <a href="/public/books/{{ $book->id }}/edit/" class="btn btn-outline-dark">Edit</a><br><br>
+                        <a href="books/{{ $book->id }}" class="btn btn-outline-info">Show</a>
+                        <a href="books/{{ $book->id }}/edit/" class="btn btn-outline-dark">Edit</a><br><br>
                         <form method="post" action="{{ route('books.destroy', $book->id) }}">
                             @csrf
                             @method('DELETE')
