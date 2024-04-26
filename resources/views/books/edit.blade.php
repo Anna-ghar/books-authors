@@ -32,8 +32,17 @@
                 <input type="text" class="form-control" name="publication_year" id="year"
                        value="{{$book->publication_year}}" required>
             </div>
+            <div class="form-group mb-2">
+                <label for="authors">Authors</label><br>
+                <select multiple name="authors[]" id="authors">
+                    @foreach($authors as $author)
+                        <option value="{{$author->id}}">{{$author->first_name . ' ' . $author->last_name}}</option>
+                    @endforeach
+                </select>
+            </div>
             <button type="submit" class="btn btn-primary">Update</button>
         </form>
+
     </div>
 </body>
 </html>

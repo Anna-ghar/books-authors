@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -12,15 +12,8 @@ class UserController extends Controller
         return view('login');
     }
 
-    public function login(Request $req)
+    public function login(LoginRequest $req)
     {
-
-
-        $req->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
 
         if (Auth::attempt([
             'email' => $req->email,

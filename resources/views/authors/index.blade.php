@@ -24,10 +24,13 @@
                     <a href="{{route('authors.create')}}" class="btn btn-primary mb-3">Add Author</a>
                 </div>
                 <div class="col-auto">
-                    <form action="{{ route('authors.search') }}" method="GET" class="form-inline">
-                        <div class="input-group">
-                            <input class="form-control" type="text" name="search" placeholder="Search authors">
-                            <button class="btn btn-outline-secondary" type="submit">Search</button>
+                    <form method="get" action="{{ route('authors.index') }}">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" name="search" placeholder="Search authors" value="{{ request()->input('search') }}">
+                            <button type="submit" class="btn btn-outline-secondary">Search</button>
+                            @if(request()->has('search'))
+                                <a href="{{ route('authors.index') }}" class="btn btn-outline-danger">Clear</a>
+                            @endif
                         </div>
                     </form>
                 </div>
@@ -53,6 +56,7 @@
                 @endforeach
         </div>
         @endif
+        {{ $authors->links() }}
     </div>
 </body>
 </html>

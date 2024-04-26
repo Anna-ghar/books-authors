@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Http\Requests\EditAuthorRequest;
+use App\Http\Requests\CreateAuthorRequest;
+use App\Http\Requests\SearchAuthorRequest;
 use App\Models\Author;
 use Illuminate\Http\Request;
 
@@ -10,9 +12,24 @@ class AuthorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+//    public function index()
+//    {
+//        $authors = Author::paginate(3);
+//        return view('authors.index', ['authors' => $authors]);
+//    }
+    public function index(SearchAuthorRequest $request)
     {
-        $authors = Author::all();
+        $search = $request->input('search');
+
+        $query = Author::query();
+
+        if (!empty($search)) {
+            $query->where('first_name', 'like', "%$search%")
+                ->orWhere('last_name', 'like', "%$search%")->get();
+        }
+
+        $authors = $query->paginate(3);
+
         return view('authors.index', ['authors' => $authors]);
     }
 
@@ -27,7 +44,7 @@ class AuthorController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateAuthorRequest $request)
     {
         $author = new Author;
         $author->first_name = $request->first_name;
@@ -58,7 +75,7 @@ class AuthorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(EditAuthorRequest $request, string $id)
     {
         $author = Author::find($id);
         $author->first_name = $request->first_name;
@@ -77,15 +94,5 @@ class AuthorController extends Controller
         $author = Author::find($id);
         $author->delete();
         return redirect()->route('authors.index');
-    }
-
-    public function search(Request $request)
-    {
-        $search = $request->search;
-        $authors = Author::where('first_name', 'like', "%$search%")
-            ->orWhere('last_name', 'like', "%$search%")
-            ->get();
-
-        return view('authors.index')->with('authors', $authors);
     }
 }

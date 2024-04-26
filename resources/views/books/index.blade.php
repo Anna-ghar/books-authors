@@ -11,6 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous">
     </script>
+
 </head>
 <body>
     @include('navigation')
@@ -24,10 +25,13 @@
                         <a href="{{route('books.create')}}" class="btn btn-primary mb-3">Add Book</a>
                     </div>
                     <div class="col-auto">
-                        <form action="{{ route('books.search') }}" method="GET" class="form-inline">
-                            <div class="input-group">
-                                <input class="form-control" type="text" name="search" placeholder="Search books">
-                                <button class="btn btn-outline-secondary" type="submit">Search</button>
+                        <form method="get" action="{{ route('books.index') }}">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" name="search" placeholder="Search authors" value="{{ request()->input('search') }}">
+                                <button type="submit" class="btn btn-outline-secondary">Search</button>
+                                @if(request()->has('search'))
+                                    <a href="{{ route('books.index') }}" class="btn btn-outline-danger">Clear</a>
+                                @endif
                             </div>
                         </form>
                     </div>
@@ -52,7 +56,9 @@
                     </div>
                 @endforeach
             </div>
+
         @endif
+            {{ $books->links() }}
     </div>
 </body>
 </html>

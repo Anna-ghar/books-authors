@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateBookRequest;
+use App\Http\Requests\EditBookRequest;
+use App\Http\Requests\SearchRequest;
 use Illuminate\Http\Request;
 use App\Models\Book;
 use App\Models\Author;
@@ -11,11 +14,22 @@ class BookController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+
+    public function index(SearchRequest $request)
     {
-        $books = Book::all();
+        $search = $request->input('search');
+
+        $query = Book::query();
+
+        if (!empty($search)) {
+            $query->where('title', 'like', "%$search%");
+        }
+
+        $books = $query->paginate(3);
+
         return view('books.index', ['books' => $books]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -29,7 +43,7 @@ class BookController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateBookRequest $request)
     {
         $book = new Book;
         $book->title = $request->title;
@@ -47,8 +61,9 @@ class BookController extends Controller
      */
     public function show(string $id)
     {
+
         $book = Book::find($id);
-        return view('books.show')->with('book', $book);
+        return view('books.show')->with('book' , $book);
     }
 
     /**
@@ -56,21 +71,23 @@ class BookController extends Controller
      */
     public function edit(string $id)
     {
+        $authors = Author::all();
         $book = Book::find($id);
-        return view('books.edit')->with('book', $book);
+        return view('books.edit')->with(['book' => $book,'authors'=>$authors]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(EditBookRequest $request, string $id)
     {
         $book = Book::find($id);
         $book->title = $request->title;
         $book->description = $request->description;
         $book->publication_year = $request->publication_year;
         $book->save();
-
+        $authors = Author::find($request->authors);
+        $book->authors()->attach($authors);
 
         return redirect()->route('books.index');
     }
@@ -85,10 +102,4 @@ class BookController extends Controller
         return redirect()->route('books.index');
     }
 
-    public function search(Request $request)
-    {
-        $search = $request->search;
-        $books = Book::where('title', 'like', "%$search%")->get();
-        return view('books.index')->with('books', $books);
-    }
 }
